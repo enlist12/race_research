@@ -1,0 +1,96 @@
+--- linux-5.4/mm/kasan/report.c	2025-03-12 16:47:03.236717531 +0800
++++ linux-5.4-patch/mm/kasan/report.c	2025-03-12 15:33:14.858848941 +0800
+@@ -104,7 +104,8 @@ static void print_track(struct kasan_tra
+ 		unsigned long *entries;
+ 		unsigned int nr_entries;
+ 
+-		nr_entries = stack_depot_fetch(track->stack, &entries);
++		int syscall = stack_depot_new_fetch(track->stack,&nr_entries ,&entries);
++		printk("SYSCALL NUM:%d",syscall);
+ 		stack_trace_print(entries, nr_entries, 0);
+ 	} else {
+ 		pr_err("(stack is not available)\n");
+@@ -370,6 +371,16 @@ static void print_address_stack_frame(co
+ static void print_address_description(void *addr, u8 tag)
+ {
+ 	struct page *page = kasan_addr_to_page(addr);
++	
++	struct pt_regs *task_regs = task_pt_regs(current);
++
++	if (task_regs){
++		int syscall_num = task_regs->orig_ax;
++		printk("SYSCALL NUM:%d\n",syscall_num);
++	}
++	else{
++		printk("This is kernel workload");
++	}
+ 
+ 	dump_stack();
+ 	pr_err("\n");
+--- linux-5.4/include/linux/stackdepot.h	2019-11-25 08:32:01.000000000 +0800
++++ linux-5.4-patch/include/linux/stackdepot.h	2025-03-12 15:19:53.742260830 +0800
+@@ -19,4 +19,7 @@ depot_stack_handle_t stack_depot_save(un
+ unsigned int stack_depot_fetch(depot_stack_handle_t handle,
+ 			       unsigned long **entries);
+ 
++int  stack_depot_new_fetch(depot_stack_handle_t handle,int*uu,
++                               unsigned long **entries);
++
+ #endif
+--- linux-5.4/lib/stackdepot.c	2019-11-25 08:32:01.000000000 +0800
++++ linux-5.4-patch/lib/stackdepot.c	2025-03-12 15:43:22.311412885 +0800
+@@ -18,7 +18,10 @@
+  *
+  * Based on code by Dmitry Chernenkov.
+  */
+-
++#include <linux/sched/task_stack.h>
++#include <linux/ptrace.h>
++#include <linux/sched.h>
++#include <linux/module.h>
+ #include <linux/gfp.h>
+ #include <linux/jhash.h>
+ #include <linux/kernel.h>
+@@ -58,6 +61,7 @@ union handle_parts {
+ 
+ struct stack_record {
+ 	struct stack_record *next;	/* Link in the hashtable */
++	u32 syscall_num;                /* syscall_num */
+ 	u32 hash;			/* Hash in the hastable */
+ 	u32 size;			/* Number of frames in the stack */
+ 	union handle_parts handle;
+@@ -128,6 +132,12 @@ static struct stack_record *depot_alloc_
+ 
+ 	stack->hash = hash;
+ 	stack->size = size;
++	
++	struct pt_regs *task_regs = task_pt_regs(current);
++
++	if (task_regs){
++		stack->syscall_num=task_regs->orig_ax;
++	}
+ 	stack->handle.slabindex = depot_index;
+ 	stack->handle.offset = depot_offset >> STACK_ALLOC_ALIGN;
+ 	stack->handle.valid = 1;
+@@ -207,6 +217,21 @@ unsigned int stack_depot_fetch(depot_sta
+ }
+ EXPORT_SYMBOL_GPL(stack_depot_fetch);
+ 
++int  stack_depot_new_fetch(depot_stack_handle_t handle,int*uu,
++                               unsigned long **entries)
++{
++        union handle_parts parts = { .handle = handle };
++        void *slab = stack_slabs[parts.slabindex];
++        size_t offset = parts.offset << STACK_ALLOC_ALIGN;
++        struct stack_record *stack = slab + offset;
++
++        *entries = stack->entries;
++	*uu=stack->size;
++        return stack->syscall_num;
++}
++EXPORT_SYMBOL_GPL(stack_depot_new_fetch);
++
++
+ /**
+  * stack_depot_save - Save a stack trace from an array
+  *
