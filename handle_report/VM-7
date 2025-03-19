@@ -1,3 +1,8 @@
+./poc
+audit: type=1400 audit(1741792888.855:6): avc:  denied  { execmem } for  pid=206 comm="poc" scontext=system_u:system_r:kernel_t:s0 tcontext=system_u:system_r:kernel_t:s0 tclass=process permissive=1
+cgroup: Unknown subsys name 'net'
+cgroup: Unknown subsys name 'rlimit'
+
 
 
 

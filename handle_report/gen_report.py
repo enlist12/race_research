@@ -49,7 +49,7 @@ def record_kasan(num:int,datas:list)->bool|int:
     
 
 while 1:
-    if num>=len(datas):
+    if num>=len(datas) or num+1>=len(datas):
         break
     if warning_split in datas[num] and (KASAN_string in datas[num+1] or Slab_string in datas[num+1]):
         alt=num

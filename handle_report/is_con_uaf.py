@@ -57,7 +57,7 @@ if args.num<1:
 
 qemu_cmd=f'qemu-system-x86_64 \
 	        -m 2G \
-	        -smp 2 \
+	        -smp 4 \
 	        -kernel {args.bzImage} \
 	        -append "console=ttyS0 root=/dev/sda kasan_multi_shot=1 earlyprintk=serial net.ifnames=0" \
 	        -net nic,model=e1000 \
@@ -132,7 +132,7 @@ def get_kasan_report(num:int,atp:int):
             data=data[-2:]
             start_time=time.time()
             find_kasan=1
-        if find_kasan and time.time()-start_time>30:
+        if find_kasan and time.time()-start_time>60:
             log.info(f"VM-{num} Reciving KASAN Report Ending")
             break
         if not find_kasan and time.time()-start>total_time:

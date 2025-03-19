@@ -1,16 +1,1414 @@
-
-kworker/dying (13) used greatest stack depth: 29456 bytes left
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800cca2718 by task kworker/1:0/23
+[   77.452374]
+CPU: 1 PID: 23 Comm: kworker/1:0 Not tainted 6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? mark_held_locks+0x9e/0xe0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   77.542430]
+Allocated by task 844:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   77.562819]
+Freed by task 844:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   77.591667]
+The buggy address belongs to the object at ffff88800cca2700
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800cca2700, ffff88800cca2780)
+[   77.611993]
+The buggy address belongs to the physical page:
+page:00000000e4057057 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xcca2
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00004b6340 dead000000000003
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   77.645319]
+Memory state around the buggy address:
+ ffff88800cca2600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800cca2680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800cca2700: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800cca2780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800cca2800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+Disabling lock debugging due to kernel taint
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800cca2770 by task kworker/1:0/23
+[   77.700883]
+CPU: 1 PID: 23 Comm: kworker/1:0 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? mark_held_locks+0x9e/0xe0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   77.795617]
+Allocated by task 844:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   77.817143]
+Freed by task 844:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   77.849741]
+The buggy address belongs to the object at ffff88800cca2700
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800cca2700, ffff88800cca2780)
+[   77.871942]
+The buggy address belongs to the physical page:
+page:00000000e4057057 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xcca2
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00004b6340 dead000000000003
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   77.908979]
+Memory state around the buggy address:
+ ffff88800cca2600: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800cca2680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800cca2700: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800cca2780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800cca2800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800bf17d18 by task kworker/u8:4/256
+[   85.944516]
+CPU: 1 PID: 256 Comm: kworker/u8:4 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? kvfree+0x46/0x50
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   86.051363]
+Allocated by task 1600:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   86.091366]
+Freed by task 1600:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   86.160951]
+The buggy address belongs to the object at ffff88800bf17d00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800bf17d00, ffff88800bf17d80)
+[   86.192173]
+The buggy address belongs to the physical page:
+page:000000004558c0f1 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xbf17
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00004f1740 dead000000000003
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   86.257045]
+Memory state around the buggy address:
+ ffff88800bf17c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800bf17c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800bf17d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800bf17d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800bf17e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800bf17d70 by task kworker/u8:4/256
+[   86.347928]
+CPU: 1 PID: 256 Comm: kworker/u8:4 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   86.547600]
+Allocated by task 1600:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   86.588204]
+Freed by task 1600:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   86.628660]
+The buggy address belongs to the object at ffff88800bf17d00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800bf17d00, ffff88800bf17d80)
+[   86.643194]
+The buggy address belongs to the physical page:
+page:000000004558c0f1 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xbf17
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00004f1740 dead000000000003
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   86.667997]
+Memory state around the buggy address:
+ ffff88800bf17c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800bf17c80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800bf17d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800bf17d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800bf17e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800daaef18 by task kworker/u8:4/256
+[   86.946537]
+CPU: 1 PID: 256 Comm: kworker/u8:4 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? kvfree+0x46/0x50
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   87.121178]
+Allocated by task 1613:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   87.153958]
+Freed by task 1613:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   87.212559]
+The buggy address belongs to the object at ffff88800daaef00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800daaef00, ffff88800daaef80)
+[   87.230087]
+The buggy address belongs to the physical page:
+page:0000000041084d41 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88800daae000 pfn:0xdaae
+flags: 0x100000000000a00(workingset|slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000a00 ffff8880084418c0 ffffea0000271790 ffffea0000354fd0
+raw: ffff88800daae000 0000000000100003 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   87.276849]
+Memory state around the buggy address:
+ ffff88800daaee00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800daaee80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800daaef00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800daaef80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800daaf000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800daaef70 by task kworker/u8:4/256
+[   87.331811]
+CPU: 1 PID: 256 Comm: kworker/u8:4 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   87.419683]
+Allocated by task 1613:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   87.452588]
+Freed by task 1613:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   87.506307]
+The buggy address belongs to the object at ffff88800daaef00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800daaef00, ffff88800daaef80)
+[   87.519709]
+The buggy address belongs to the physical page:
+page:0000000041084d41 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88800daae000 pfn:0xdaae
+flags: 0x100000000000a00(workingset|slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000a00 ffff8880084418c0 ffffea0000271790 ffffea0000354fd0
+raw: ffff88800daae000 0000000000100003 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   87.549079]
+Memory state around the buggy address:
+ ffff88800daaee00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800daaee80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800daaef00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800daaef80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800daaf000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800ce8cc18 by task kworker/1:0/23
+[   90.016088]
+CPU: 1 PID: 23 Comm: kworker/1:0 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_release+0x4d6/0x690
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   90.108477]
+Allocated by task 1848:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.127785]
+Freed by task 1848:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.163848]
+The buggy address belongs to the object at ffff88800ce8cc00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800ce8cc00, ffff88800ce8cc80)
+[   90.178965]
+The buggy address belongs to the physical page:
+page:000000004b08df64 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xce8c
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea0000363080 dead000000000002
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   90.235085]
+Memory state around the buggy address:
+ ffff88800ce8cb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800ce8cb80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800ce8cc00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800ce8cc80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800ce8cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800ce8cc70 by task kworker/1:0/23
+[   90.335118]
+CPU: 1 PID: 23 Comm: kworker/1:0 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_release+0x4d6/0x690
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   90.497350]
+Allocated by task 1848:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.516670]
+Freed by task 1848:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.569700]
+The buggy address belongs to the object at ffff88800ce8cc00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800ce8cc00, ffff88800ce8cc80)
+[   90.598713]
+The buggy address belongs to the physical page:
+page:000000004b08df64 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xce8c
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea0000363080 dead000000000002
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   90.654484]
+Memory state around the buggy address:
+ ffff88800ce8cb00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800ce8cb80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800ce8cc00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800ce8cc80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800ce8cd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800c850e18 by task kworker/0:2/54
+[   90.810200]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_acquire+0x432/0x4d0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   90.916649]
+Allocated by task 1878:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.946303]
+Freed by task 1878:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   90.978761]
+The buggy address belongs to the object at ffff88800c850e00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800c850e00, ffff88800c850e80)
+[   90.997999]
+The buggy address belongs to the physical page:
+page:00000000322a3279 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xc850
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   91.027040]
+Memory state around the buggy address:
+ ffff88800c850d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800c850d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800c850e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800c850e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800c850f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800c850e70 by task kworker/0:2/54
+[   91.080754]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_acquire+0x432/0x4d0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   91.194754]
+Allocated by task 1878:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   91.221567]
+Freed by task 1878:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   91.250792]
+The buggy address belongs to the object at ffff88800c850e00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800c850e00, ffff88800c850e80)
+[   91.265422]
+The buggy address belongs to the physical page:
+page:00000000322a3279 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xc850
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 0000000000000000 dead000000000001
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   91.294833]
+Memory state around the buggy address:
+ ffff88800c850d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800c850d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800c850e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800c850e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800c850f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff888016a27818 by task kworker/0:2/54
+[   94.257346]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? queue_work_on+0x80/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   94.343154]
+Allocated by task 2154:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   94.383317]
+Freed by task 2154:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   94.429368]
+The buggy address belongs to the object at ffff888016a27800
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff888016a27800, ffff888016a27880)
+[   94.460383]
+The buggy address belongs to the physical page:
+page:00000000d9a37f54 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x16a27
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00002719c0 dead000000000004
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   94.500993]
+Memory state around the buggy address:
+ ffff888016a27700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+ ffff888016a27780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888016a27800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff888016a27880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888016a27900: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff888016a27870 by task kworker/0:2/54
+[   94.563570]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? queue_work_on+0x80/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   94.746117]
+Allocated by task 2154:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   94.793471]
+Freed by task 2154:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   94.862581]
+The buggy address belongs to the object at ffff888016a27800
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff888016a27800, ffff888016a27880)
+[   94.892414]
+The buggy address belongs to the physical page:
+page:00000000d9a37f54 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x16a27
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea00002719c0 dead000000000004
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   94.952019]
+Memory state around the buggy address:
+ ffff888016a27700: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc fc
+ ffff888016a27780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888016a27800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff888016a27880: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888016a27900: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff888013648e18 by task kworker/0:2/54
+[   95.884684]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_release+0x4d6/0x690
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   95.989998]
+Allocated by task 2232:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   96.010150]
+Freed by task 2232:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   96.040677]
+The buggy address belongs to the object at ffff888013648e00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff888013648e00, ffff888013648e80)
+[   96.051704]
+The buggy address belongs to the physical page:
+page:000000006bc8e81f refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x13648
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea000033de00 dead000000000005
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   96.090669]
+Memory state around the buggy address:
+ ffff888013648d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888013648d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888013648e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff888013648e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888013648f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff888013648e70 by task kworker/0:2/54
+[   96.138323]
+CPU: 0 PID: 54 Comm: kworker/0:2 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events bpf_prog_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? lock_release+0x4d6/0x690
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? queue_work_on+0x86/0xc0
+ ? bpf_prog_free_deferred+0x12e/0x6f0
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ bpf_prog_free_deferred+0x12e/0x6f0
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? lockdep_hardirqs_on_prepare+0x262/0x3f0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[   96.241098]
+Allocated by task 2232:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   96.281658]
+Freed by task 2232:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[   96.318582]
+The buggy address belongs to the object at ffff888013648e00
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff888013648e00, ffff888013648e80)
+[   96.331147]
+The buggy address belongs to the physical page:
+page:000000006bc8e81f refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x13648
+anon flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea000033de00 dead000000000005
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[   96.374079]
+Memory state around the buggy address:
+ ffff888013648d00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888013648d80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff888013648e00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff888013648e80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888013648f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x497/0x510
+Read of size 8 at addr ffff88800e9d8418 by task kworker/u8:7/1881
+[  105.100333]
+CPU: 0 PID: 1881 Comm: kworker/u8:7 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x497/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x497/0x510
+ ? kvfree+0x46/0x50
+ bpf_trace_run2+0x497/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[  105.203007]
+Allocated by task 2989:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[  105.223484]
+Freed by task 2989:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[  105.256729]
+The buggy address belongs to the object at ffff88800e9d8400
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 24 bytes inside of
+ freed 128-byte region [ffff88800e9d8400, ffff88800e9d8480)
+[  105.274780]
+The buggy address belongs to the physical page:
+page:00000000dc2a57c4 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xe9d8
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea0000340f40 dead000000000004
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[  105.327006]
+Memory state around the buggy address:
+ ffff88800e9d8300: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800e9d8380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800e9d8400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff88800e9d8480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800e9d8500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
+==================================================================
+==================================================================
+BUG: KASAN: slab-use-after-free in bpf_trace_run2+0x4cf/0x510
+Read of size 8 at addr ffff88800e9d8470 by task kworker/u8:7/1881
+[  105.409384]
+CPU: 0 PID: 1881 Comm: kworker/u8:7 Tainted: G    B              6.8.0 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: events_unbound bpf_map_free_deferred
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x91/0xf0
+ print_report+0xcb/0x620
+ ? __virt_addr_valid+0x100/0x5c0
+ ? bpf_trace_run2+0x4cf/0x510
+ kasan_report+0xbd/0xf0
+ ? __pfx_lock_release+0x10/0x10
+ ? bpf_trace_run2+0x4cf/0x510
+ bpf_trace_run2+0x4cf/0x510
+ ? __pfx_bpf_trace_run2+0x10/0x10
+ ? __pfx_synchronize_rcu+0x10/0x10
+ ? __pfx_call_rcu_hurry+0x10/0x10
+ ? kvfree+0x46/0x50
+ ? kvfree+0x46/0x50
+ __traceiter_kfree+0x30/0x50
+ kfree+0x1e2/0x340
+ ? __pfx_lock_release+0x10/0x10
+ kvfree+0x46/0x50
+ sock_map_free+0x402/0x4a0
+ bpf_map_free_deferred+0x1d1/0x440
+ process_one_work+0x8af/0x18b0
+ ? __pfx_lock_acquire+0x10/0x10
+ ? __pfx_process_one_work+0x10/0x10
+ ? move_linked_works+0x172/0x270
+ ? assign_work+0x196/0x240
+ worker_thread+0x67d/0xee0
+ ? trace_irq_enable.constprop.0+0xc2/0xe0
+ ? __pfx_worker_thread+0x10/0x10
+ kthread+0x2c2/0x3a0
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork+0x48/0x80
+ ? __pfx_kthread+0x10/0x10
+ ret_from_fork_asm+0x1a/0x30
+ </TASK>
+[  105.604669]
+Allocated by task 2989:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ __kasan_kmalloc+0x7f/0x90
+ bpf_raw_tp_link_attach+0x163/0x630
+ __sys_bpf+0x3a9/0x5280
+ __x64_sys_bpf+0x78/0xc0
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[  105.654234]
+Freed by task 2989:
+ kasan_save_stack+0x24/0x50
+ kasan_save_track+0x14/0x30
+ kasan_save_free_info+0x3b/0x60
+ __kasan_slab_free+0x106/0x190
+ kfree+0xec/0x340
+ bpf_link_release+0x62/0x80
+ __fput+0x26a/0xb60
+ task_work_run+0x16c/0x260
+ do_exit+0xae2/0x2900
+ do_group_exit+0xd3/0x2a0
+ __x64_sys_exit_group+0x3e/0x50
+ do_syscall_64+0xc9/0x1e0
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+[  105.718865]
+The buggy address belongs to the object at ffff88800e9d8400
+ which belongs to the cache kmalloc-128 of size 128
+The buggy address is located 112 bytes inside of
+ freed 128-byte region [ffff88800e9d8400, ffff88800e9d8480)
+[  105.751706]
+The buggy address belongs to the physical page:
+page:00000000dc2a57c4 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xe9d8
+flags: 0x100000000000800(slab|node=0|zone=1)
+page_type: 0xffffffff()
+raw: 0100000000000800 ffff8880084418c0 ffffea0000340f40 dead000000000004
+raw: 0000000000000000 0000000000100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[  105.810221]
+Memory state around the buggy address:
+ ffff88800e9d8300: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88800e9d8380: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff88800e9d8400: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88800e9d8480: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff88800e9d8500: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 fc
+==================================================================
+==================================================================

@@ -1,16 +1,340 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
+==================================================================
+BUG: KASAN: use-after-free in nft_ct_tmpl_put_pcpu+0x135/0x1e0
+Write of size 4 at addr ffff8880232ea000 by task poc/9812
+[  156.943869][ T9812]
+CPU: 1 PID: 9812 Comm: poc Not tainted 5.14.0-rc4 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Call Trace:
+ dump_stack_lvl+0xcd/0x134
+ print_address_description.constprop.0.cold+0x6c/0x309
+ ? nft_ct_tmpl_put_pcpu+0x135/0x1e0
+ kasan_report.cold+0x83/0xdf
+ ? nft_ct_tmpl_put_pcpu+0x135/0x1e0
+ kasan_check_range+0x140/0x190
+ nft_ct_tmpl_put_pcpu+0x135/0x1e0
+ nft_ct_set_init+0x421/0x760
+ ? nft_ct_set_destroy+0x140/0x140
+ ? rcu_read_lock_sched_held+0x3a/0x70
+ ? trace_kmalloc+0x35/0xf0
+ ? nft_ct_set_destroy+0x140/0x140
+ nft_expr_init+0x145/0x2d0
+ ? nf_tables_expr_parse+0x8f0/0x8f0
+ ? queue_work_node+0x280/0x280
+ ? init_timer_key+0x14f/0x340
+ ? __sanitizer_cov_trace_const_cmp2+0x22/0x80
+ ? nft_rhash_init+0x2b2/0x360
+ ? nft_rhash_gc_init+0xc0/0xc0
+ ? jhash+0x5c0/0x5c0
+ ? nft_rhash_key+0x50/0x50
+ nft_set_elem_expr_alloc+0x27/0x280
+ nf_tables_newset+0x2066/0x31c0
+ ? __nla_validate_parse+0x2df/0x2420
+ ? nft_set_elem_expr_alloc+0x280/0x280
+ ? nla_get_range_signed+0x360/0x360
+ ? lock_downgrade+0x6e0/0x6e0
+ ? __nla_parse+0x3d/0x50
+ nfnetlink_rcv_batch+0x170b/0x25e0
+ ? nfnetlink_bind+0x300/0x300
+ ? find_held_lock+0x2d/0x110
+ ? lock_downgrade+0x6e0/0x6e0
+ ? __local_bh_enable_ip+0xa0/0x110
+ ? nla_get_range_signed+0x360/0x360
+ ? netdev_core_pick_tx+0x2e0/0x2e0
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? apparmor_capable+0x1d8/0x460
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? security_capable+0x8f/0xc0
+ ? __nla_parse+0x3d/0x50
+ nfnetlink_rcv+0x3af/0x420
+ ? nfnetlink_rcv_batch+0x25e0/0x25e0
+ netlink_unicast+0x533/0x7d0
+ ? netlink_attachskb+0x880/0x880
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ ? __phys_addr_symbol+0x2c/0x70
+ ? __sanitizer_cov_trace_cmp8+0x1d/0x70
+ ? __check_object_size+0x16e/0x3f0
+ netlink_sendmsg+0x866/0xdb0
+ ? netlink_unicast+0x7d0/0x7d0
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? netlink_unicast+0x7d0/0x7d0
+ sock_sendmsg+0xcf/0x120
+ ____sys_sendmsg+0x6e3/0x800
+ ? sock_poll+0x5e0/0x5e0
+ ? do_recvmmsg+0x6d0/0x6d0
+ ? lock_chain_count+0x20/0x20
+ ? lock_chain_count+0x20/0x20
+ ___sys_sendmsg+0x100/0x170
+ ? sendmsg_copy_msghdr+0x160/0x160
+ ? __lock_acquire+0x15d9/0x50d0
+ ? lockdep_hardirqs_on_prepare+0x400/0x400
+ ? lockdep_hardirqs_on_prepare+0x400/0x400
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? __fget_light+0x215/0x280
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ __sys_sendmsg+0xe9/0x1b0
+ ? __sys_sendmsg_sock+0x30/0x30
+ ? lock_downgrade+0x6e0/0x6e0
+ ? syscall_enter_from_user_mode+0x21/0x70
+ do_syscall_64+0x35/0xb0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4504ed
+Code: c3 e8 f7 20 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2d5b2ea8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000200001a2 RCX: 00000000004504ed
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000003
+RBP: 00007ffc2d5b3020 R08: 00000000004a724f R09: 00000000004a724f
+R10: 00007ffc2d5b2a80 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc2d5b3268 R14: 00000000004d2710 R15: 0000000000000001
+[  157.275077][ T9812]
+Allocated by task 9812:
+ kasan_save_stack+0x1b/0x40
+ __kasan_kmalloc+0x9b/0xd0
+ nf_ct_tmpl_alloc+0x8d/0x270
+ nft_ct_set_init+0x4d9/0x760
+ nft_expr_init+0x145/0x2d0
+ nft_set_elem_expr_alloc+0x27/0x280
+ nf_tables_newset+0x2066/0x31c0
+ nfnetlink_rcv_batch+0x170b/0x25e0
+ nfnetlink_rcv+0x3af/0x420
+ netlink_unicast+0x533/0x7d0
+ netlink_sendmsg+0x866/0xdb0
+ sock_sendmsg+0xcf/0x120
+ ____sys_sendmsg+0x6e3/0x800
+ ___sys_sendmsg+0x100/0x170
+ __sys_sendmsg+0xe9/0x1b0
+ do_syscall_64+0x35/0xb0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  157.335905][ T9812]
+Freed by task 9811:
+ kasan_save_stack+0x1b/0x40
+ kasan_set_track+0x1c/0x30
+ kasan_set_free_info+0x20/0x30
+ __kasan_slab_free+0xfb/0x130
+ slab_free_freelist_hook+0xee/0x280
+ kfree+0xe4/0x530
+ destroy_conntrack+0x222/0x2c0
+ nf_conntrack_destroy+0xab/0x230
+ nft_ct_tmpl_put_pcpu+0x15e/0x1e0
+ nft_ct_set_init+0x421/0x760
+ nft_expr_init+0x145/0x2d0
+ nft_set_elem_expr_alloc+0x27/0x280
+ nf_tables_newset+0x2066/0x31c0
+ nfnetlink_rcv_batch+0x170b/0x25e0
+ nfnetlink_rcv+0x3af/0x420
+ netlink_unicast+0x533/0x7d0
+ netlink_sendmsg+0x866/0xdb0
+ sock_sendmsg+0xcf/0x120
+ ____sys_sendmsg+0x6e3/0x800
+ ___sys_sendmsg+0x100/0x170
+ __sys_sendmsg+0xe9/0x1b0
+ do_syscall_64+0x35/0xb0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+[  157.434556][ T9812]
+Last potentially related work creation:
+ kasan_save_stack+0x1b/0x40
+ kasan_record_aux_stack+0xe5/0x110
+ insert_work+0x48/0x370
+ __queue_work+0x5c1/0xed0
+ call_timer_fn+0x1a5/0x6b0
+ __run_timers.part.0+0x49f/0xa50
+ run_timer_softirq+0xb3/0x1d0
+ __do_softirq+0x299/0x9af
+[  157.476967][ T9812]
+Second to last potentially related work creation:
+ kasan_save_stack+0x1b/0x40
+ kasan_record_aux_stack+0xe5/0x110
+ kvfree_call_rcu+0x74/0x990
+ ops_init+0x2f4/0x420
+ register_pernet_operations+0x35a/0x850
+ register_pernet_subsys+0x25/0x40
+ tcf_register_action+0x10e/0x370
+ do_one_initcall+0x103/0x650
+ kernel_init_freeable+0x6b8/0x741
+ kernel_init+0x1a/0x1d0
+ ret_from_fork+0x1f/0x30
+[  157.531063][ T9812]
+The buggy address belongs to the object at ffff8880232ea000
+ which belongs to the cache kmalloc-512 of size 512
+The buggy address is located 0 bytes inside of
+ 512-byte region [ffff8880232ea000, ffff8880232ea200)
+The buggy address belongs to the page:
+page:00000000803dc82e refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x232e8
+head:00000000803dc82e order:2 compound_mapcount:0 compound_pincount:0
+flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 0000000000000000 0000000500000001 ffff888011041c80
+raw: 0000000000000000 0000000080100010 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+[  157.609757][ T9812]
+Memory state around the buggy address:
+ ffff8880232e9f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff8880232e9f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>ffff8880232ea000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880232ea080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880232ea100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+Disabling lock debugging due to kernel taint
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 9859 at net/netfilter/nf_conntrack_core.c:610 destroy_conntrack+0x232/0x2c0
+Modules linked in:
+CPU: 0 PID: 9859 Comm: poc Tainted: G    B             5.14.0-rc4 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:destroy_conntrack+0x232/0x2c0
+Code: 12 fd ff eb 90 e8 2e 7c 1e fa 48 89 ef e8 b6 65 02 00 48 89 ef e8 0e d8 63 fa 5b 5d 41 5c 41 5d e9 13 7c 1e fa e8 0e 7c 1e fa <0f> 0b e9 2f fe ff ff e8 02 7c 1e fa 4c 8d a5 e8 00 00 00 48 b8 00
+RSP: 0018:ffffc900055b7068 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: 00000000ffffffff RCX: 0000000000000000
+RDX: ffff8880123ed100 RSI: ffffffff8756d3c2 RDI: 0000000000000003
+RBP: ffff888021e9f000 R08: 0000000000000000 R09: ffff888021e9f003
+R10: ffffffff8756d1f0 R11: 0000000000000000 R12: ffff888021e9f000
+R13: ffffffff8b30d880 R14: 0000000000000000 R15: 0000000000000001
+FS:  0000000001715480(0000) GS:ffff88806bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f068a471920 CR3: 0000000032ed6000 CR4: 00000000000006f0
+Call Trace:
+ nf_conntrack_destroy+0xab/0x230
+ nft_ct_tmpl_put_pcpu+0x15e/0x1e0
+ nft_ct_set_init+0x421/0x760
+ ? nft_ct_set_destroy+0x140/0x140
+ ? rcu_read_lock_sched_held+0xd/0x70
+ ? trace_kmalloc+0x35/0xf0
+ ? nft_ct_set_destroy+0x140/0x140
+ nft_expr_init+0x145/0x2d0
+ ? nf_tables_expr_parse+0x8f0/0x8f0
+ ? queue_work_node+0x280/0x280
+ ? init_timer_key+0x14f/0x340
+ ? __sanitizer_cov_trace_const_cmp2+0x22/0x80
+ ? nft_rhash_init+0x2b2/0x360
+ ? nft_rhash_gc_init+0xc0/0xc0
+ ? jhash+0x5c0/0x5c0
+ ? nft_rhash_key+0x50/0x50
+ nft_set_elem_expr_alloc+0x27/0x280
+ nf_tables_newset+0x2066/0x31c0
+ ? __nla_validate_parse+0x2df/0x2420
+ ? nft_set_elem_expr_alloc+0x280/0x280
+ ? nla_get_range_signed+0x360/0x360
+ ? lock_downgrade+0x6e0/0x6e0
+ ? __nla_parse+0x3d/0x50
+ nfnetlink_rcv_batch+0x170b/0x25e0
+ ? nfnetlink_bind+0x300/0x300
+ ? rcu_read_lock_sched_held+0xd/0x70
+ ? lock_downgrade+0x6e0/0x6e0
+ ? nlmon_xmit+0xa1/0xd0
+ ? __local_bh_enable_ip+0xa0/0x110
+ ? trace_hardirqs_on+0x5b/0x1c0
+ ? nla_get_range_signed+0x360/0x360
+ ? netdev_core_pick_tx+0x2e0/0x2e0
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? apparmor_capable+0x1d8/0x460
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? security_capable+0x8f/0xc0
+ ? __nla_parse+0x3d/0x50
+ nfnetlink_rcv+0x3af/0x420
+ ? nfnetlink_rcv_batch+0x25e0/0x25e0
+ netlink_unicast+0x533/0x7d0
+ ? netlink_attachskb+0x880/0x880
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ ? __phys_addr_symbol+0x2c/0x70
+ ? __sanitizer_cov_trace_cmp8+0x1d/0x70
+ ? __check_object_size+0x16e/0x3f0
+ netlink_sendmsg+0x866/0xdb0
+ ? netlink_unicast+0x7d0/0x7d0
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? netlink_unicast+0x7d0/0x7d0
+ sock_sendmsg+0xcf/0x120
+ ____sys_sendmsg+0x6e3/0x800
+ ? sock_poll+0x5e0/0x5e0
+ ? do_recvmmsg+0x6d0/0x6d0
+ ? filemap_map_pages+0x817/0x1860
+ ___sys_sendmsg+0x100/0x170
+ ? sendmsg_copy_msghdr+0x160/0x160
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? __handle_mm_fault+0x616/0x5230
+ ? vm_iomap_memory+0x190/0x190
+ ? lock_release+0x720/0x720
+ ? __sanitizer_cov_trace_const_cmp4+0x1c/0x70
+ ? __fget_light+0x215/0x280
+ ? __sanitizer_cov_trace_const_cmp8+0x1d/0x70
+ __sys_sendmsg+0xe9/0x1b0
+ ? __sys_sendmsg_sock+0x30/0x30
+ ? lock_downgrade+0x6e0/0x6e0
+ ? syscall_enter_from_user_mode+0x21/0x70
+ do_syscall_64+0x35/0xb0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x4504ed
+Code: c3 e8 f7 20 00 00 0f 1f 80 00 00 00 00 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc2d5b2ea8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000200001a2 RCX: 00000000004504ed
+RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000003
+RBP: 00007ffc2d5b3020 R08: 00000000004a724f R09: 00000000004a724f
+R10: 00007ffc2d5b2a80 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffc2d5b3268 R14: 00000000004d2710 R15: 0000000000000001
+irq event stamp: 0
+hardirqs last  enabled at (0): [<0000000000000000>] 0x0
+hardirqs last disabled at (0): [<ffffffff8143dfab>] copy_process+0x1dcb/0x7320
+softirqs last  enabled at (0): [<ffffffff8143dfec>] copy_process+0x1e0c/0x7320
+softirqs last disabled at (0): [<0000000000000000>] 0x0
+---[ end trace 36e1aad0687b399a ]---
+------------[ cut here ]------------
+kernel BUG at arch/x86/mm/physaddr.c:28!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 9941 Comm: poc Tainted: G    B   W         5.14.0-rc4 #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+RIP: 0010:__phys_addr+0xd4/0x140
+Code: e3 44 89 e9 31 ff 48 d3 eb 48 89 de e8 25 16 41 00 48 85 db 75 0f e8 bb 10 41 00 4c 89 e0 5b 5d 41 5c 41 5d c3 e8 ac 10 41 00 <0f> 0b e8 a5 10 41 00 48 c7 c0 10 50 6b 8b 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90005787c50 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ff88803150b00000 RCX: 0000000000000000
+RDX: ffff88801da0d100 RSI: ffffffff81343f24 RDI: 0000000000000003
+RBP: ff888031d0b00000 R08: ff888031d0b00000 R09: ffffffff81bb49b5
+R10: ffffffff81343e9f R11: 000000000000003f R12: ff88f7b150b00000
+R13: ffffc90005787cb0 R14: ffffea0000000000 R15: ff88803150b00000
+FS:  0000000001715480(0000) GS:ffff88806bc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00000000200000c0 CR3: 0000000031e7a000 CR4: 00000000000006f0
+Call Trace:
+ qlist_free_all+0x76/0xc0
+ kasan_quarantine_reduce+0x176/0x1b0
+ __kasan_slab_alloc+0x8e/0xa0
+ kmem_cache_alloc+0x292/0x4d0
+ getname_flags.part.0+0x50/0x4e0
+ getname+0x8e/0xd0
+ do_sys_openat2+0xf5/0x420
+ ? build_open_flags+0x680/0x680
+ ? lock_acquire+0x442/0x510
+ ? lock_release+0x522/0x720
+ ? __context_tracking_exit+0xb8/0xe0
+ ? lock_downgrade+0x6e0/0x6e0
+ ? lock_downgrade+0x6e0/0x6e0
+ __x64_sys_openat+0x13c/0x1f0
+ ? __ia32_sys_open+0x1c0/0x1c0
+ ? syscall_enter_from_user_mode+0x21/0x70
+ do_syscall_64+0x35/0xb0
+ entry_SYSCALL_64_after_hwframe+0x44/0xae
+RIP: 0033:0x44f56b
+Code: 25 00 00 41 00 3d 00 00 41 00 74 4b 64 8b 04 25 18 00 00 00 85 c0 75 67 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 91 00 00 00 48 8b 54 24 28 64 48 2b 14 25
+RSP: 002b:00007ffc2d5b2a90 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007ffc2d5b3278 RCX: 000000000044f56b
+RDX: 0000000000080001 RSI: 00000000004a73ef RDI: 00000000ffffff9c
+RBP: 00000000004a73ef R08: 0000000000000000 R09: 00007ffc2d5b2a80
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080001
+R13: 00007ffc2d5b3268 R14: 00000000004d2710 R15: 0000000000000001
+Modules linked in:
+---[ end trace 36e1aad0687b399b ]---
+RIP: 0010:__phys_addr+0xd4/0x140
+Code: e3 44 89 e9 31 ff 48 d3 eb 48 89 de e8 25 16 41 00 48 85 db 75 0f e8 bb 10 41 00 4c 89 e0 5b 5d 41 5c 41 5d c3 e8 ac 10 41 00 <0f> 0b e8 a5 10 41 00 48 c7 c0 10 50 6b 8b 48 ba 00 00 00 00 00 fc
+RSP: 0018:ffffc90005787c50 EFLAGS: 00010293
+RAX: 0000000000000000 RBX: ff88803150b00000 RCX: 0000000000000000
+RDX: ffff88801da0d100 RSI: ffffffff81343f24 RDI: 0000000000000003
+RBP: ff888031d0b00000 R08: ff888031d0b00000 R09: ffffffff81bb49b5
+R10: ffffffff81343e9f R11: 000000000000003f R12: ff88f7b150b00000
+R13: ffffc90005787cb0 R14: ffffea0000000000 R15: ff88803150b00000
+FS:  0000000001715480(0000) GS:ffff88806bd00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f068a440aa0 CR3: 0000000031e7a000 CR4: 00000000000006e0
+Kernel panic - not syncing: Fatal exception
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
 
