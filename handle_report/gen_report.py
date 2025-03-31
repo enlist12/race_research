@@ -54,9 +54,13 @@ while 1:
     if warning_split in datas[num] and (KASAN_string in datas[num+1] or Slab_string in datas[num+1]):
         alt=num
         while 1:
+            if alt+1>=len(datas):
+                break
             if KASAN_string in datas[alt+1] or Slab_string in datas[alt+1]:
                 alt+=1
             else:
+                break
+        if alt+1>=len(datas):
                 break
         names=datas[alt].split(" ")
         name=names[0]+" "+names[1]+" "+names[2]+" "+names[3]+" "+names[4]+'\n'
