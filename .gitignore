@@ -6,3 +6,4 @@ handle_report/VM*
 handle_report/report*
 handle_report/title*
 dataflowanitizer.cpp
+.vscode/*
